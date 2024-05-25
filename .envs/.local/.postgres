@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=webtask_scheduler
+POSTGRES_USER=RLyblpWIztGTvpPbbzVKxdbjQipKGfXq
+POSTGRES_PASSWORD=hVMEHSLGbH7LIoVgHakPRbxqi9lv4ivQv5yY9JldlsGoJlVcJdW2ngI9k08YAt6k
