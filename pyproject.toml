@@ -55,6 +55,34 @@ indent_size = 2
 
 
 [tool.ruff]
+ignore = [
+  "RUF012",
+  "RUF001",
+  "S106",
+  "S105",
+  "F403",
+  "N806",
+  "DJ001",  # Avoid using `null=True` on string-based fields such as TextField
+  "DJ007",  # using __all__ in models
+  "BLE001",
+  "S113",
+  "N805",
+  "N815",
+  "N802",
+  "TRY401",
+  "N818",
+  "S101",
+  "N811",
+  "N812",
+  "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
+  "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+  "EXE002", # The file is executable but no shebang is present
+  "SIM102", # sometimes it's better to nest
+  "UP038" # Checks for uses of isinstance/issubclass that take a tuple 
+          # of types for comparison.
+          # Deactivated because it can make the code slow: 
+          # https://github.com/astral-sh/ruff/issues/7871
+]
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
@@ -81,77 +109,33 @@ exclude = [
     "*/migrations/*.py",
     "staticfiles/*"
 ]
+select = [
+  "E",    # pycodestyle
+  "F",    # pyflakes
+  "UP",   # pyupgrade
+  "I",    # isort
+  "N",    # pep8-naming
+  "S",    # falke8-bandit
+  "BLE",  # flake8-blind-except
+  "C4",   # flake8-comprehensions
+  "T10",  # flake8-debugger
+  "T20",  # flake8-print
+  "DJ01", # flake8-django,
+  "RUF",  # ruff
+  "Q",    # flake8-quotes
+  "SIM",  # flake8-simplify
+  "C90",  # mccabe
+  "DJ",   # flake8-django
+  "TID",  # flake8-tidy-imports
+  "INT",  # flake8-gettext
+]
+
 # Same as Django: https://github.com/cookiecutter/cookiecutter-django/issues/4792.
 indent-width = 4
 line-length = 120
 target-version = "py312"
+ignore-init-module-imports = true
 
-[tool.ruff.lint]
-select = [
-  "F",
-  "E",
-  "W",
-  "C90",
-  "I",
-  "N",
-  "UP",
-  "YTT",
-  # "ANN", # flake8-annotations: we should support this in the future but 100+ errors atm
-  "ASYNC",
-  "S",
-  "BLE",
-  "FBT",
-  "B",
-  "A",
-  "COM",
-  "C4",
-  "DTZ",
-  "T10",
-  "DJ",
-  "EM",
-  "EXE",
-  "FA",
-  'ISC',
-  "ICN",
-  "G",
-  'INP',
-  'PIE',
-  "T20",
-  'PYI',
-  'PT',
-  "Q",
-  "RSE",
-  "RET",
-  "SLF",
-  "SLOT",
-  "SIM",
-  "TID",
-  "TCH",
-  "INT",
-  # "ARG", # Unused function argument
-  "PTH",
-  "ERA",
-  "PD",
-  "PGH",
-  "PL",
-  "TRY",
-  "FLY",
-  # "NPY",
-  # "AIR",
-  "PERF",
-  # "FURB",
-  # "LOG",
-  "RUF"
-]
-ignore = [
-  "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
-  "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
-  "SIM102", # sometimes it's better to nest
-  "UP038" # Checks for uses of isinstance/issubclass that take a tuple 
-          # of types for comparison.
-          # Deactivated because it can make the code slow: 
-          # https://github.com/astral-sh/ruff/issues/7871
-]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []
@@ -171,3 +155,20 @@ line-ending = "auto"
 
 [tool.ruff.lint.isort]
 force-single-line = true
+
+[tool.ruff.isort.sections]
+"django" = ["django"]
+
+[tool.ruff.isort]
+known-first-party = ["scheduler"]
+section-order = [
+  "future",
+  "standard-library",
+  "django",
+  "third-party",
+  "first-party",
+  "localfolder",
+]
+[tool.ruff.flake8-tidy-imports]
+# Disallow all relative imports.
+ban-relative-imports = "all"
