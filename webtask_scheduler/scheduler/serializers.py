@@ -13,7 +13,6 @@ class SetTimerInputSerializer(serializers.Serializer):
 
 class SetTimerOutputSerializer(serializers.Serializer):
     task_uuid = serializers.UUIDField(read_only=True)
-    status = serializers.CharField(read_only=True)
     time_left = serializers.CharField(read_only=True)
 
     class Meta:

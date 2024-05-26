@@ -1,6 +1,8 @@
 import logging
 
 from django.utils import timezone
+from django_celery_beat.models import ClockedSchedule
+from django_celery_beat.models import PeriodicTask
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions
 from rest_framework import status
@@ -33,20 +35,22 @@ class SetTimerAPIView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         input_serializer = self.input_serializer_class(data=request.data, context={"request": request})
         input_serializer.is_valid(raise_exception=True)
-        eta = timezone.now() + timezone.timedelta(
-            hours=input_serializer.validated_data["hours"],
-            minutes=input_serializer.validated_data["minutes"],
-            seconds=input_serializer.validated_data["seconds"],
+        hours = input_serializer.validated_data["hours"]
+        minutes = input_serializer.validated_data["minutes"]
+        seconds = input_serializer.validated_data["seconds"]
+        run_at = timezone.datetime.now() + timezone.timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        task = PeriodicTask.objects.create(
+            name=f"Get request to {input_serializer.validated_data['web_url']} at {run_at}",
+            task="webtask_scheduler.scheduler.tasks.send_request_to_url",
+            one_off=True,
+            clocked=ClockedSchedule.objects.create(clocked_time=run_at),
+            args=f'["{input_serializer.validated_data["web_url"]}"]',
         )
-        task = send_request_to_url.apply_async(
-            args=[input_serializer.validated_data["web_url"]],
-            eta=eta,
-        )
-        # time_left = task.eta - timezone.now()
+
+        time_left = timezone.now() + timezone.timedelta(hours=hours, minutes=minutes, seconds=seconds)
         data = {
             "task_uuid": task.id,
-            "status": task.status,
-            "time_left": 10,
+            "time_left": time_left,
         }
         output_serializer = self.output_serializer_class(data)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
