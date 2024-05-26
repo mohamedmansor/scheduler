@@ -14,4 +14,4 @@ def send_request_to_url(url):
     except requests.exceptions.RequestException as e:
         logger.exception("Failed to send request to %s: %s", url, e)
         return {"error": str(e)}
-    return response.json()
+    return response.text

@@ -11,9 +11,10 @@ class SetTimerInputSerializer(serializers.Serializer):
         fields = ["hours", "minutes", "seconds", "web_url"]
 
 
-class SetTimerOutputSerializer(serializers.ModelSerializer):
-    task_id = serializers.UUIDField(source="id", read_only=True)
-    time_left = serializers.CharField(source="get_time_left_display", read_only=True)
+class SetTimerOutputSerializer(serializers.Serializer):
+    task_uuid = serializers.UUIDField(read_only=True)
+    status = serializers.CharField(read_only=True)
+    time_left = serializers.CharField(read_only=True)
 
     class Meta:
-        fields = ["id", "time_left"]
+        fields = ["task_uuid", "time_left"]
