@@ -10,7 +10,7 @@ urlpatterns = [
         name="set-timer",
     ),
     path(
-        "get-timer/<str:task_uuid>/",
+        "get-timer/<str:task_id>/",
         view=views.GetTimerAPIView.as_view(),
         name="get-timer",
     ),

@@ -12,7 +12,6 @@ from rest_framework.response import Response
 
 from webtask_scheduler.scheduler.serializers import SetTimerInputSerializer
 from webtask_scheduler.scheduler.serializers import SetTimerOutputSerializer
-from webtask_scheduler.scheduler.tasks import send_request_to_url
 
 logger = logging.getLogger(__name__)
 
@@ -45,11 +44,12 @@ class SetTimerAPIView(CreateAPIView):
             one_off=True,
             clocked=ClockedSchedule.objects.create(clocked_time=run_at),
             args=f'["{input_serializer.validated_data["web_url"]}"]',
+            expires=run_at,
         )
 
         time_left = timezone.now() + timezone.timedelta(hours=hours, minutes=minutes, seconds=seconds)
         data = {
-            "task_uuid": task.id,
+            "task_id": task.id,
             "time_left": time_left,
         }
         output_serializer = self.output_serializer_class(data)
@@ -70,12 +70,13 @@ class GetTimerAPIView(RetrieveAPIView):
         responses=SetTimerOutputSerializer,
     )
     def get(self, request, *args, **kwargs):
-        task_uuid = self.kwargs["task_uuid"]
-        task = send_request_to_url.AsyncResult(task_uuid)
-        # time_left = task.eta - timezone.now()
+        task_id = self.kwargs["task_id"]
+        try:
+            task = PeriodicTask.objects.get(id=task_id)
+        except PeriodicTask.DoesNotExist:
+            return Response({"detail": "Task not found."}, status=status.HTTP_404_NOT_FOUND)
         data = {
-            "task_uuid": task.id,
-            "status": task.status,
+            "task_id": task.id,
             "time_left": 10,
         }
         output_serializer = self.output_serializer_class(data)
