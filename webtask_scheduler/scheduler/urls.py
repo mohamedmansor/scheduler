@@ -5,13 +5,13 @@ from webtask_scheduler.scheduler import views
 app_name = "scheduler"
 urlpatterns = [
     path(
-        "set-timer/",
+        "timer/",
         view=views.SetTimerAPIView.as_view(),
-        name="set-timer",
+        name="timer",
     ),
     path(
-        "get-timer/<str:task_id>/",
+        "timer/<str:task_id>/",
         view=views.GetTimerAPIView.as_view(),
-        name="get-timer",
+        name="timer",
     ),
 ]

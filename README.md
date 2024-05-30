@@ -1,103 +1,120 @@
-# WebTask Scheduler
+# About
 
-Behold My Awesome Project!
-License: MIT
+The main objective of webtask_scheduler project is to be  a service that allows us to execute scheduled tasks.
+For simplicity, let’s assume that tasks can be triggered by accessing a web URL. You create
+a task by providing a URL and the desired time to run.
+When the specified time arrives, the service will call the URL.
 
-## Basic Commands
+# 🏛️ The Solution decisions
+- Reusing `PeriodicTask` Model
+- Isolating requirements
+- Isolating compose services
+- make use of Celery 
 
-### Setting Up Your Users
+`/timer` Receives a JSON object containing hours, minutes, seconds, and a web url.
 
-- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+Return task ID and time left in seconds.
 
-- To create a **superuser account**, use this command:
+**The good bractice for such a service is to create a model that inherits from `PeriodicTask` and Add replace the `pk` with `UUID`. This was skiped to avoid extra complexity and make project easy for review.**
 
-      $ python manage.py createsuperuser
+`/timer/{timer_uuid}` Receives the timer id in the URL, as the resource uuid. 
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+Returns a JSON object with the amount of seconds left until the timer expires.
+If the timer already expired, returns 0.
 
-### Test coverage
 
-To run the tests, check your test coverage, and generate an HTML coverage report:
+# 💻 Running Locally
 
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-#### Running tests with pytest
-
-    $ pytest
-
-### Celery
-
-This app comes with Celery.
-
-To run a celery worker:
+1. Go to `webtask_scheduler` directory
 
 ```bash
 cd webtask_scheduler
-celery -A config.celery_app worker -l info
 ```
 
-Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
+2. Build
 
-To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
-
-```bash
-cd webtask_scheduler
-celery -A config.celery_app beat
-```
-
-or you can embed the beat service inside a worker with the `-B` option (not recommended for production use):
-
-```bash
-cd webtask_scheduler
-celery -A config.celery_app worker -B -l info
-```
-
-### Sentry
-
-Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
-The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
-
-You must set the DSN url in production.
-
-# Translations
-
-Start by configuring the `LANGUAGES` settings in `base.py`, by uncommenting languages you are willing to support. Then, translations strings will be placed in this folder when running:
-
-```bash
-docker compose -f docker-compose.local.yml run --rm django python manage.py makemessages -all --no-location
-```
-
-This should generate `django.po` (stands for Portable Object) files under each locale `<locale name>/LC_MESSAGES/django.po`. Each translatable string in the codebase is collected with its `msgid` and need to be translated as `msgstr`, for example:
-
-```po
-msgid "users"
-msgstr "utilisateurs"
-```
-
-Once all translations are done, they need to be compiled into `.mo` files (stands for Machine Object), which are the actual binary files used by the application:
-
-```bash
-docker compose -f docker-compose.local.yml run --rm django python manage.py compilemessages
-```
-
-Note that the `.po` files are NOT used by the application directly, so if the `.mo` files are out of dates, the content won't appear as translated even if the `.po` files are up-to-date.
-
-## Production
-
-The production image runs `compilemessages` automatically at build time, so as long as your translated source files (PO) are up-to-date, you're good to go.
-
-## Add a new language
-
-1. Update the [`LANGUAGES` setting](https://docs.djangoproject.com/en/stable/ref/settings/#std-setting-LANGUAGES) to your project's base settings.
-2. Create the locale folder for the language next to this file, e.g. `fr_FR` for French. Make sure the case is correct.
-3. Run `makemessages` (as instructed above) to generate the PO files for the new language.
-
-# run the project
 ```bash
 docker compose -f docker-compose.local.yml build
 ```
+
+3. Run
+
 ```bash
 docker compose -f docker-compose.local.yml up
 ```
+
+4. Access Swagger Docs using the below url
+
+```
+0.0.0.0:8000/api/docs
+```
+
+# 🔨 Usage
+For the ease of use the Authentication and Authorization was skiped.
+Assuming it's a public APIs to create/retrive tasks. But it depends on the app usage Authentication and Authorization can be added accordingly.
+
+### Set timer
+
+Use swagger TODO
+
+### Get timer
+
+Use swagger TODO
+
+### List all Tasks
+
+This step requires a **superuser account**.
+> PS: default login/register identifier is email instead of username
+
+1. Create admin user
+
+```bash
+docker-compose -f docker-compose.local.yml exec django /entrypoint python manage.py createsuperuser
+```
+
+2. Enter email and password
+
+3. Open `0.0.0.0:8000/admin/django_celery_beat/periodictask`
+
+# 🧪 Tests
+
+Running the all project tests at once using `pytest` Use this command
+
+```bash
+docker-compose -f docker-compose.local.yml exec django /entrypoint pytest
+```
+
+In case of running single function Use this command
+
+```bash
+docker-compose -f docker-compose.local.yml exec django /entrypoint pytest -s -vv -k <test_function>
+```
+
+# 🚀 Production mode
+
+To avoid adding more complexity to the project Some of the production configurations was skiped. However in order to deploy and run this application into production environment you should:
+
+### Translation
+
+- by creating `webtask_scheduler/locale/<language>`
+- configuring the `LANGUAGES` settings in `base.py`, by uncommenting languages you are willing to support. Then, translations strings will be placed in this folder when running
+- Make messages `docker-compose -f docker-compose.local.yml exec django /entrypoint python manage.py makemessages --no-location`
+- Once all translations are done, they need to be compiled into `.mo` files (stands for Machine Object), which are the actual binary files used by the application `docker compose -f docker-compose.local.yml run --rm django python manage.py compilemessages`
+
+> The production image runs `compilemessages` automatically at build time, so as long as your translated source files (PO) are up-to-date, you're good to go.
+
+
+### Add monitoring tools
+
+- Sentry Using`sentry-sdk` Add `SENTRY_DSN` to `.envs/.production/.django` (Use gitcrypt to encrypt production envs)
+
+### Create a docker-compose.production.yml
+
+- Add production services with production envs
+- Add Dockerfile for Django and Postgres
+- Add start and entrypoint bash script in each one according to the project need
+- Finally build the project then Push image to ECR or run it using compose up command.
+
+### Default error pages
+
+Finally Add to templates directory the default error page 400, 403, 500 html files. Then Update `config/urls.py` with Error path and template.

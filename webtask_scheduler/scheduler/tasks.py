@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def send_request_to_url(url):
+def send_request_to_url(url: str) -> str | dict:
     """
     Sends a POST request to the specified URL and returns the response text.
 
@@ -15,7 +15,7 @@ def send_request_to_url(url):
         url (str): The URL to send the request to.
 
     Returns:
-        str: The response text.
+        Union[str, dict]: The response text or an error dictionary.
 
     Raises:
         requests.exceptions.RequestException: If an error occurs while sending the request.

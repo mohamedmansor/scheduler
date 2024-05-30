@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import pytz
@@ -38,15 +39,17 @@ class SetTimerAPIView(CreateAPIView):
         request=SetTimerInputSerializer,
         responses=SetTimerOutputSerializer,
     )
-    def post(self, request, *args, **kwargs):
-        input_serializer = self.input_serializer_class(data=request.data, context={"request": request})
+    def post(self, request, *args, **kwargs) -> Response:
+        input_serializer: SetTimerInputSerializer = self.input_serializer_class(
+            data=request.data, context={"request": request}
+        )
         input_serializer.is_valid(raise_exception=True)
-        hours = input_serializer.validated_data["hours"]
-        minutes = input_serializer.validated_data["minutes"]
-        seconds = input_serializer.validated_data["seconds"]
-        time_now = timezone.now().replace(tzinfo=pytz.utc)
-        run_at = time_now + timezone.timedelta(hours=hours, minutes=minutes, seconds=seconds)
-        task = PeriodicTask.objects.create(
+        hours: int = input_serializer.validated_data["hours"]
+        minutes: int = input_serializer.validated_data["minutes"]
+        seconds: int = input_serializer.validated_data["seconds"]
+        time_now: datetime = timezone.now().replace(tzinfo=pytz.utc)
+        run_at: datetime = time_now + timezone.timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        task: PeriodicTask = PeriodicTask.objects.create(
             name=f"Get request to {input_serializer.validated_data['web_url']} at {run_at}",
             task="webtask_scheduler.scheduler.tasks.send_request_to_url",
             one_off=True,
@@ -54,12 +57,12 @@ class SetTimerAPIView(CreateAPIView):
             args=f'["{input_serializer.validated_data["web_url"]}"]',
         )
 
-        time_left_in_seconds = round((task.clocked.clocked_time - time_now).total_seconds(), 1)
-        data = {
+        time_left_in_seconds: float = round((task.clocked.clocked_time - time_now).total_seconds(), 1)
+        data: dict = {
             "task_id": task.id,
             "time_left_in_seconds": time_left_in_seconds,
         }
-        output_serializer = self.output_serializer_class(data)
+        output_serializer: SetTimerOutputSerializer = self.output_serializer_class(data)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
 

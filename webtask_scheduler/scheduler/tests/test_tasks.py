@@ -9,20 +9,19 @@ pytestmark = pytest.mark.django_db
 
 
 class MockResponse:
-    def __init__(self, json_data={}, status_code=200, reason=None):
+    def __init__(self, json_data: dict = {}, status_code: int = 200, reason: str = None):
         self.data = json_data
         self.status_code = status_code
         self.reason = reason or "dummy reason"
 
     @property
-    def text(self):
+    def text(self) -> dict:
         return self.data
 
-    def raise_for_status(self):
+    def raise_for_status(self) -> None:
         http_error_msg = ""
         if 400 <= self.status_code < 500:
             http_error_msg = f"{self.status_code} Error: {self.reason}"
-
         elif 500 <= self.status_code < 600:
             http_error_msg = f"{self.status_code} Server Error: {self.reason}"
 
@@ -32,7 +31,7 @@ class MockResponse:
 
 class TestTasks:
     @patch("webtask_scheduler.scheduler.tasks.requests.post")
-    def test_send_request_to_url_success(self, requests_mock):
+    def test_send_request_to_url_success(self, requests_mock: patch) -> None:
         """Test sending a request to a URL successfully."""
         # Arrange
         url = "https://webhook.com"
@@ -46,7 +45,7 @@ class TestTasks:
 
     @patch("webtask_scheduler.scheduler.tasks.requests.post")
     @patch("logging.Logger.error")
-    def test_send_request_to_url_failure(self, mock_logger, requests_mock):
+    def test_send_request_to_url_failure(self, mock_logger: patch, requests_mock: patch) -> None:
         """Test sending a request to a URL that returns an error."""
         # Arrange
         url = "https://webhook.com"
@@ -62,7 +61,7 @@ class TestTasks:
 
     @patch("webtask_scheduler.scheduler.tasks.requests.post")
     @patch("logging.Logger.error")
-    def test_send_request_to_url_timeout(self, mock_logger, requests_mock):
+    def test_send_request_to_url_timeout(self, mock_logger: patch, requests_mock: patch) -> None:
         """Test sending a request to a URL that times out."""
         # Arrange
         url = "https://webhook.com"
