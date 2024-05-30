@@ -190,7 +190,6 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "webtask_scheduler.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -296,7 +295,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-task_send_sent_event
 CELERY_TASK_SEND_SENT_EVENT = True
-CELERY_IMPORTS = ("webtask_scheduler.users.tasks", "webtask_scheduler.scheduler.tasks")
+CELERY_IMPORTS = "webtask_scheduler.scheduler.tasks"
 
 
 # django-allauth
