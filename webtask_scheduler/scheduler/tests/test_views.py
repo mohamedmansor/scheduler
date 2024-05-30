@@ -14,6 +14,10 @@ pytestmark = pytest.mark.django_db
 
 
 class TestGetTimerAPIView:
+    """
+    Test case class for testing the GetTimerAPIView.
+    """
+
     @pytest.fixture
     def api_client(self) -> APIClient:
         return APIClient()
@@ -60,6 +64,10 @@ class TestGetTimerAPIView:
 
 
 class TestSetTimerAPIView:
+    """
+    Test case class for testing the SetTimerAPIView.
+    """
+
     @pytest.fixture
     def api_client(self) -> APIClient:
         return APIClient()
