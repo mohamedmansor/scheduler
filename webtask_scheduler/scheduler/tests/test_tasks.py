@@ -8,51 +8,71 @@ from webtask_scheduler.scheduler.tasks import send_request_to_url
 pytestmark = pytest.mark.django_db
 
 
-@patch("webtask_scheduler.scheduler.tasks.requests.post")
-def test_send_request_to_url_success(requests_mock):
-    """Test sending a request to a URL successfully."""
-    # Arrange
-    url = "https://webhook.com"
-    expected_response = {"message": "Success"}
-    requests_mock.return_value.json.return_value = expected_response
+class MockResponse:
+    def __init__(self, json_data={}, status_code=200, reason=None):
+        self.data = json_data
+        self.status_code = status_code
+        self.reason = reason or "dummy reason"
 
-    # Act
-    result = send_request_to_url(url)
+    @property
+    def text(self):
+        return self.data
 
-    # Assert
-    assert result == expected_response
+    def raise_for_status(self):
+        http_error_msg = ""
+        if 400 <= self.status_code < 500:
+            http_error_msg = f"{self.status_code} Error: {self.reason}"
 
+        elif 500 <= self.status_code < 600:
+            http_error_msg = f"{self.status_code} Server Error: {self.reason}"
 
-@patch("webtask_scheduler.scheduler.tasks.requests.post")
-@patch("logging.Logger.error")
-def test_send_request_to_url_failure(mock_logger, requests_mock):
-    """Test sending a request to a URL that returns an error."""
-    # Arrange
-    url = "https://webhook.com"
-    expected_error = "Internal Server Error"
-    requests_mock.side_effect = requests.exceptions.HTTPError(expected_error)
-
-    # Act
-    result = send_request_to_url(url)
-
-    # Assert
-    assert result == {"error": expected_error}
-    mock_logger.assert_called_once()
+        if http_error_msg:
+            raise requests.exceptions.HTTPError(http_error_msg, response=self)
 
 
-@patch("webtask_scheduler.scheduler.tasks.requests.post")
-@patch("logging.Logger.error")
-def test_send_request_to_url_timeout(mock_logger, requests_mock):
-    """Test sending a request to a URL that times out."""
-    # Arrange
-    url = "https://webhook.com"
-    expected_error = "Request timed out"
+class TestTasks:
+    @patch("webtask_scheduler.scheduler.tasks.requests.post")
+    def test_send_request_to_url_success(self, requests_mock):
+        """Test sending a request to a URL successfully."""
+        # Arrange
+        url = "https://webhook.com"
+        requests_mock.return_value = MockResponse(json_data={"message": "Success"}, status_code=200)
 
-    requests_mock.side_effect = requests.exceptions.Timeout(expected_error)
+        # Act
+        result = send_request_to_url(url)
 
-    # Act
-    result = send_request_to_url(url)
+        # Assert
+        assert result == {"message": "Success"}
 
-    # Assert
-    assert result == {"error": expected_error}
-    mock_logger.assert_called_once()
+    @patch("webtask_scheduler.scheduler.tasks.requests.post")
+    @patch("logging.Logger.error")
+    def test_send_request_to_url_failure(self, mock_logger, requests_mock):
+        """Test sending a request to a URL that returns an error."""
+        # Arrange
+        url = "https://webhook.com"
+        expected_error = "Internal Server Error"
+        requests_mock.side_effect = requests.exceptions.HTTPError(expected_error)
+
+        # Act
+        result = send_request_to_url(url)
+
+        # Assert
+        assert result == {"error": expected_error}
+        mock_logger.assert_called_once()
+
+    @patch("webtask_scheduler.scheduler.tasks.requests.post")
+    @patch("logging.Logger.error")
+    def test_send_request_to_url_timeout(self, mock_logger, requests_mock):
+        """Test sending a request to a URL that times out."""
+        # Arrange
+        url = "https://webhook.com"
+        expected_error = "Request timed out"
+
+        requests_mock.side_effect = requests.exceptions.Timeout(expected_error)
+
+        # Act
+        result = send_request_to_url(url)
+
+        # Assert
+        assert result == {"error": expected_error}
+        mock_logger.assert_called_once()

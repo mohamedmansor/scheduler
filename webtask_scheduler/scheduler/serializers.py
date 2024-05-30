@@ -13,7 +13,7 @@ class SetTimerInputSerializer(serializers.Serializer):
 
 class SetTimerOutputSerializer(serializers.Serializer):
     task_id = serializers.IntegerField(read_only=True)
-    time_left_in_seconds = serializers.CharField(read_only=True)
+    time_left_in_seconds = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = ["task_id", "time_left_in_seconds"]

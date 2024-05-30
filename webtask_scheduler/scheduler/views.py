@@ -25,7 +25,10 @@ class SetTimerAPIView(CreateAPIView):
 
     """
 
-    permission_classes = (permissions.IsAuthenticated,)
+    # Authentication and permission classes are set to allow access without authentication
+    # It's recommended to set appropriate authentication and permission classes based on the application's requirements
+    # But for the purpose of this example, we are allowing access without authentication
+    permission_classes = (permissions.AllowAny,)
 
     input_serializer_class = SetTimerInputSerializer
     output_serializer_class = SetTimerOutputSerializer
@@ -70,7 +73,11 @@ class GetTimerAPIView(RetrieveAPIView):
 
     """
 
-    permission_classes = (permissions.IsAuthenticated,)
+    # Authentication and permission classes are set to allow access without authentication
+    # It's recommended to set appropriate authentication and permission classes based on the application's requirements
+    # But for the purpose of this example, we are allowing access without authentication
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = []
 
     output_serializer_class = SetTimerOutputSerializer
 
