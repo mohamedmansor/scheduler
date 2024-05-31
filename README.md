@@ -30,6 +30,8 @@ Return task ID and time left in seconds.
 Returns a JSON object with the amount of seconds left until the timer expires.
 If the timer already expired, returns 0.
 
+> ### poetry
+> I had a great opportunity to learn more about poetry with this task. I added poetry configurations in `pyproject.toml` and in the `Dockerfile`. However, since it was my first time using it, I encountered a couple of errors. Debugging these errors would have taken more time than I wanted to spend on the task, so I chose the safer option of using `requirements.txt`.
 
 # 💻 Running Locally
 

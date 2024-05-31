@@ -13,13 +13,24 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # psycopg dependencies
   libpq-dev
 
+# # Install poetry
+# RUN pip install --no-cache-dir poetry
+
+
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements .
+
+# # Copy pyproject.toml
+# COPY pyproject.toml .
+# COPY poetry.lock .
 
 # Create Python Dependency and Sub-Dependency Wheels.
 RUN pip wheel --wheel-dir /usr/src/app/wheels  \
   -r ${BUILD_ENVIRONMENT}.txt
 
+# # Install dependencies using poetry
+# RUN poetry config virtualenvs.create false \
+#   && poetry install --no-interaction
 
 # Python 'run' stage
 FROM python as python-run-stage
