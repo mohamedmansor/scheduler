@@ -37,12 +37,12 @@ class TestGetTimerAPIView:
         )
         return task
 
-    def test_get_timer_id_not_found(self, api_client: APIClient, test_data: PeriodicTask) -> None:
+    def test_get_timer_id_not_found(self, api_client: APIClient) -> None:
         url: str = reverse("api:scheduler:timer", kwargs={"task_id": 999999})
         response: Response = api_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == {"detail": "Task not found."}
+        assert response.json() == {"detail": "Task with ID 999999 does not exist"}
 
     @time_machine.travel(dt.datetime(2024, 5, 31, 1, 24, tzinfo=pytz.utc))
     def test_get_expired_timer_returns_zero(self, api_client: APIClient, test_data: PeriodicTask) -> None:
