@@ -10,7 +10,7 @@ When the specified time arrives, the service will call the URL.
 
 I've reused the `PeriodicTask` Model to make use of it's features to create a model instance that will store task info.
 If I was about to build my Own model for our case in the project context, I would cloned some of it's fields (name, task, clocked).
-I found it fit our need in this project But in a bigger context we might need to add UUID field.
+I found it fit our need in this project But in a bigger context we might need to add UUID field. 
 
 The usage of User app is to enable login and creating a superuser account with email as an identifier instead of username. So that reviewer can view the tasks list and filter though them.
 
@@ -66,6 +66,7 @@ Assuming it's a public APIs to create/retrive tasks. But it depends on the app u
 Use swagger docs url `0.0.0.0:8000/api/docs/#/scheduler/v1_scheduler_timer_create` to test setting timer by providing hours, minutes, seconds and web_url values.
 
 Validation Fields (hours, minutes, seconds) must be integer and greater than or equal zero.
+
 
 ### Get timer
 

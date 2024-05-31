@@ -27,8 +27,8 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: webtask_scheduler_production_postgres
+      dockerfile: ./compose/local/postgres/Dockerfile
+    image: webtask_scheduler_local_postgres
     container_name: webtask_scheduler_local_postgres
     volumes:
       - webtask_scheduler_local_postgres_data:/var/lib/postgresql/data
@@ -58,6 +58,7 @@ services:
     <<: *django
     image: webtask_scheduler_local_celerybeat
     container_name: webtask_scheduler_local_celerybeat
+    restart: always
     depends_on:
       - redis
       - postgres

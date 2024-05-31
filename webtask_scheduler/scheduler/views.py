@@ -26,6 +26,7 @@ class SetTimerAPIView(CreateAPIView):
     # It's recommended to set appropriate authentication and permission classes based on the application's requirements
     # But for the purpose of this example, we are allowing access without authentication
     permission_classes = (permissions.AllowAny,)
+
     input_serializer_class = SetTimerInputSerializer
     output_serializer_class = SetTimerOutputSerializer
 
@@ -64,6 +65,7 @@ class GetTimerAPIView(RetrieveAPIView):
     # It's recommended to set appropriate authentication and permission classes based on the application's requirements
     # But for the purpose of this example, we are allowing access without authentication
     permission_classes = (permissions.AllowAny,)
+
     output_serializer_class = SetTimerOutputSerializer
 
     @extend_schema(

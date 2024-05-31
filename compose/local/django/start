@@ -5,6 +5,6 @@ set -o pipefail
 set -o nounset
 
 
-python /app/manage.py compilemessages
 python manage.py migrate
+python /app/manage.py compilemessages
 python manage.py runserver 0.0.0.0:8000

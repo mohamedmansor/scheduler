@@ -1,3 +1,15 @@
+# #!/bin/bash
+
+# set -o errexit
+# set -o pipefail
+# set -o nounset
+# set -o xtrace
+
+
+
+# rm -f './celerybeat.pid'
+# exec celery -A config.celery_app worker beat -l INFO
+
 #!/bin/bash
 
 set -o errexit
@@ -5,5 +17,4 @@ set -o nounset
 
 
 rm -f './celerybeat.pid'
-# exec watchfiles --filter python celery.__main__.main --args '-A config.celery_app beat -l INFO'
-exec celery -A config.celery_app worker beat -l INFO
+exec watchfiles --filter python celery.__main__.main --args '-A config.celery_app beat -l INFO'
