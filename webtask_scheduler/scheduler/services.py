@@ -37,6 +37,7 @@ class TimerService:
         """
         Get the remaining time left for a timer to expire.
         """
+        logger.info(f"Getting time left for task with ID {task_id}")
         try:
             task: PeriodicTask = PeriodicTask.objects.get(id=task_id)
         except PeriodicTask.DoesNotExist:
