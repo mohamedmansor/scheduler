@@ -190,7 +190,7 @@ hiredis = "2.3.2"
 celery = "5.3.4"
 django-celery-beat = "2.6.0"
 flower = "2.0.1"
-django = "4.2.13"
+django = "5.0.6"
 django-environ = "0.11.2"
 django-model-utils = "4.5.1"
 django-allauth = {version = "0.63.1", extras = ["mfa"]}
