@@ -6,10 +6,18 @@ a task by providing a URL and the desired time to run.
 When the specified time arrives, the service will call the URL.
 
 # 🏛️ The Solution decisions
-- Reusing `PeriodicTask` Model
-- Isolating requirements
-- Isolating compose services
-- make use of Celery 
+
+
+I've reused the `PeriodicTask` Model to make use of it's features to create a model instance that will store task info.
+If I was about to build my Own model for our case in the project context, I would cloned some of it's fields (name, task, clocked).
+I found it fit our need in this project But in a bigger context we might need to add UUID field.
+
+The usage of User app is to enable login and creating a superuser account with email as an identifier instead of username. So that reviewer can view the tasks list and filter though them.
+
+
+I've Created the `compose` directory with `local` sub-directory, and inside it contains the start shell scripts for used services (flower, beat, and worker) in addition to `Dockerfile` The reason for this decision was to make it easy to deploy the app on different environment. All is needed is to create another directory with same directory structure and use it in the related compose file.
+
+# Scheduler APIs
 
 `/timer` Receives a JSON object containing hours, minutes, seconds, and a web url.
 
@@ -55,11 +63,13 @@ Assuming it's a public APIs to create/retrive tasks. But it depends on the app u
 
 ### Set timer
 
-Use swagger TODO
+Use swagger docs url `0.0.0.0:8000/api/docs/#/scheduler/v1_scheduler_timer_create` to test setting timer by providing hours, minutes, seconds and web_url values.
+
+Validation Fields (hours, minutes, seconds) must be integer and greater than or equal zero.
 
 ### Get timer
 
-Use swagger TODO
+Use swagger docs url `0.0.0.0:8000/api/docs/#/scheduler/v1_scheduler_timer_retrieve` to test getting a timer with provided task ID or return 404 status code if ID was not found.
 
 ### List all Tasks
 
@@ -107,6 +117,7 @@ To avoid adding more complexity to the project Some of the production configurat
 ### Add monitoring tools
 
 - Sentry Using`sentry-sdk` Add `SENTRY_DSN` to `.envs/.production/.django` (Use gitcrypt to encrypt production envs)
+- Add Datadog for logs
 
 ### Create a docker-compose.production.yml
 
