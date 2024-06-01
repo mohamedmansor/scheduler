@@ -44,13 +44,13 @@ cd webtask_scheduler
 2. Build
 
 ```bash
-docker compose -f docker-compose.local.yml build
+docker compose build
 ```
 
 3. Run
 
 ```bash
-docker compose -f docker-compose.local.yml up
+docker compose up
 ```
 
 4. Access Swagger Docs using the below url
@@ -82,7 +82,7 @@ This step requires a **superuser account**.
 1. Create admin user
 
 ```bash
-docker-compose -f docker-compose.local.yml exec django /entrypoint python manage.py createsuperuser
+docker-compose exec django /entrypoint python manage.py createsuperuser
 ```
 
 2. Enter email and password
@@ -94,33 +94,23 @@ docker-compose -f docker-compose.local.yml exec django /entrypoint python manage
 Running the all project tests at once using `pytest` Use this command
 
 ```bash
-docker-compose -f docker-compose.local.yml exec django /entrypoint pytest
+docker-compose exec django /entrypoint pytest
 ```
 
 In case of running single function Use this command
 
 ```bash
-docker-compose -f docker-compose.local.yml exec django /entrypoint pytest -s -vv -k <test_function>
+docker-compose exec django /entrypoint pytest -s -vv -k <test_function>
 ```
 
 # 🚀 Production mode
 
 To avoid adding more complexity to the project Some of the production configurations was skiped. However in order to deploy and run this application into production environment you should:
 
-### Translation
-
-- by creating `webtask_scheduler/locale/<language>`
-- configuring the `LANGUAGES` settings in `base.py`, by uncommenting languages you are willing to support. Then, translations strings will be placed in this folder when running
-- Make messages `docker-compose -f docker-compose.local.yml exec django /entrypoint python manage.py makemessages --no-location`
-- Once all translations are done, they need to be compiled into `.mo` files (stands for Machine Object), which are the actual binary files used by the application `docker compose -f docker-compose.local.yml run --rm django python manage.py compilemessages`
-
-> The production image runs `compilemessages` automatically at build time, so as long as your translated source files (PO) are up-to-date, you're good to go.
-
 
 ### Add monitoring tools
 
 - Sentry Using`sentry-sdk` Add `SENTRY_DSN` to `.envs/.production/.django` (Use gitcrypt to encrypt production envs)
-- Add Datadog for logs
 
 ### Create a docker-compose.production.yml
 
